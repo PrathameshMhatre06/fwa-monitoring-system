@@ -1,35 +1,30 @@
-import pandas as pd
-import joblib
 import shap
-from sqlalchemy import create_engine
-import numpy as np
+import pandas as pd
 
-# Connect to DB
-engine = create_engine("sqlite:///fwa/data/fwa_claims.db")
 
-# Load model
-model = joblib.load("fwa/models/xgb_fraud_model.pkl")
+def generate_shap_explanation(calibrated_model, input_df):
 
-# Load one sample claim
-data = pd.read_sql("SELECT * FROM claims LIMIT 1", engine)
+    # Extract base XGBoost model
+    try:
+        base_model = calibrated_model.calibrated_classifiers_[0].estimator
+    except:
+        base_model = calibrated_model
 
-X = data.drop(columns=["claim_id", "patient_id", "is_fraud"])
+    # Use modern SHAP API (more stable)
+    explainer = shap.Explainer(base_model)
 
-# SHAP Explainer
-explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X)
+    shap_values = explainer(input_df)
 
-feature_names = X.columns
-shap_vals = shap_values[0]
+    shap_df = pd.DataFrame({
+        "feature": input_df.columns,
+        "shap_value": shap_values.values[0]
+    })
 
-# Combine feature + value
-feature_impact = list(zip(feature_names, shap_vals))
+    shap_df["impact"] = shap_df["shap_value"].abs()
+    shap_df = shap_df.sort_values("impact", ascending=False)
 
-# Sort by absolute impact
-feature_impact_sorted = sorted(feature_impact, key=lambda x: abs(x[1]), reverse=True)
+    shap_df["direction"] = shap_df["shap_value"].apply(
+        lambda x: "Increases Risk" if x > 0 else "Decreases Risk"
+    )
 
-print("Top 3 Feature Drivers for This Claim:\n")
-
-for feature, value in feature_impact_sorted[:3]:
-    direction = "Increased Fraud Risk" if value > 0 else "Decreased Fraud Risk"
-    print(f"{feature} → {value:.4f} ({direction})")
+    return shap_df

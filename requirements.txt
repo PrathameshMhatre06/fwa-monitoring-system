@@ -1,8 +1,9 @@
+streamlit
 pandas
 numpy
-scikit-learn
-xgboost
-sqlalchemy
 joblib
 shap
-streamlit
+plotly
+networkx
+scikit-learn
+xgboost

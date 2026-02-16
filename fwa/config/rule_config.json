@@ -1,0 +1,41 @@
+{
+  "aggregation_rules": {
+    "hospital_30day_total_threshold": 1000000,
+    "hospital_30day_count_threshold": 20,
+    "patient_60day_total_threshold": 500000,
+    "patient_60day_count_threshold": 5
+  },
+
+  "velocity_rules": {
+    "patient_7day_count_threshold": 3,
+    "patient_7day_total_threshold": 300000,
+    "patient_15day_count_threshold": 5
+  },
+
+  "behavioral_rules": {
+    "strong_deviation_threshold": 3,
+    "critical_deviation_threshold": 5
+  },
+
+  "disease_rules": {
+    "strong_deviation_threshold": 3,
+    "critical_deviation_threshold": 5
+  },
+
+  "network_rules": {
+    "doctor_30day_total_threshold": 1000000,
+    "doctor_30day_count_threshold": 20,
+    "doctor_unique_hospital_threshold": 5
+  },
+
+  "early_policy_rules": {
+    "critical_policy_age_days": 30,
+    "strong_policy_age_days": 45,
+
+    "early_claim_amount_threshold": 100000,
+
+    "early_claim_policy_ratio_threshold": 1000,
+    "early_velocity_threshold": 2,
+    "early_disease_deviation_threshold": 3
+  }
+}
