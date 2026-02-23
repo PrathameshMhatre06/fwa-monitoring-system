@@ -34,7 +34,7 @@ def get_network_intelligence(patient_id, doctor_id, hospital_id, claim_date):
             "network_collusion_score": 0
         }
 
-    df["claim_date"] = pd.to_datetime(df["claim_date"])
+    df["claim_date"] = pd.to_datetime(df["claim_date"], format="mixed")
     claim_date = pd.to_datetime(claim_date)
 
     # Use 180-day window for relationship analysis

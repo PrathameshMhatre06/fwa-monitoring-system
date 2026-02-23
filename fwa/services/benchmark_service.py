@@ -10,6 +10,7 @@ def get_disease_deviation(disease_code, claim_amount):
     """
     Calculates how much this claim deviates from
     historical average for the same disease.
+    Log normalized to match train_model.py.
     """
 
     conn = sqlite3.connect(DB_PATH)
@@ -33,5 +34,8 @@ def get_disease_deviation(disease_code, claim_amount):
         deviation_ratio = claim_amount / avg_amount
     else:
         deviation_ratio = 0
+
+    # Apply log1p normalization — MUST match train_model.py
+    deviation_ratio = float(np.log1p(deviation_ratio))
 
     return deviation_ratio

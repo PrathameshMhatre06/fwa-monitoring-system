@@ -67,7 +67,7 @@ def get_behavioral_metrics(patient_id, hospital_id, current_amount, claim_date):
     conn.close()
 
     # ----------------------------------------
-    # Deviation Ratios
+    # Deviation Ratios (log normalized to match training)
     # ----------------------------------------
     patient_deviation_ratio = (
         current_amount / patient_avg if patient_avg > 0 else 0
@@ -76,6 +76,10 @@ def get_behavioral_metrics(patient_id, hospital_id, current_amount, claim_date):
     hospital_deviation_ratio = (
         current_amount / hospital_avg if hospital_avg > 0 else 0
     )
+
+    # Apply log1p normalization — MUST match train_model.py
+    patient_deviation_ratio = float(np.log1p(patient_deviation_ratio))
+    hospital_deviation_ratio = float(np.log1p(hospital_deviation_ratio))
 
     return {
         "patient_avg_claim": patient_avg,
